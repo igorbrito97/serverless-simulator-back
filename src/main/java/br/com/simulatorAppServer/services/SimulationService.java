@@ -64,12 +64,6 @@ public class SimulationService {
         }
 
         generateReport();
-
-
-        //reunião 30/06 simulação de eventos discretos ->
-        //distribuição exponencial -> chegada de clientes do sistema
-        //atualizo o relogio da simulação quando retira coisa da lista de eventos futuros
-
     }
 
     private AbstractMap.SimpleEntry<SimulationEventTypeEnum, Double> getNextEvent(double[] list) {
