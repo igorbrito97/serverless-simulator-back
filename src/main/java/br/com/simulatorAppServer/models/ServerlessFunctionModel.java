@@ -4,39 +4,61 @@ import br.com.simulatorAppServer.enums.ServerlessExecutionEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 public class ServerlessFunctionModel {
     private Boolean rejected;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
     private ServerlessExecutionEnum executionType;
-    private Double executionTime;
-    private Double currentTime;
+    private double startTime;
+    private double executionTime;
+    private double endOfExecutionTime;
+    private double terminationTime;
 
-    public ServerlessFunctionModel(Double timeValue, Boolean rejected) {
+    public ServerlessFunctionModel(double timeValue, double executionTime, Long threshold) {
         //rejected
-        this.executionTime = timeValue;
-        this.currentTime = 0.0; // ou timeValue ???? não saber ainda
-        this.startTime = this.endTime = LocalDateTime.now();
-        this.rejected = rejected;
+        this.executionTime = executionTime;
+        this.startTime = timeValue;
+        this.endOfExecutionTime = timeValue + executionTime;
+        this.terminationTime = timeValue + executionTime + threshold;
+        this.rejected = true;
     }
 
-    public ServerlessFunctionModel(Double timeValue, ServerlessExecutionEnum executionType) {
+    public ServerlessFunctionModel(double timeValue, double executionTime, Long threshold, ServerlessExecutionEnum executionType) {
         //normal
-        this.executionTime = this.currentTime = timeValue;
-        this.startTime = LocalDateTime.now();
+        this.executionTime = executionTime;
+        this.startTime = timeValue;
+        this.endOfExecutionTime = timeValue + executionTime;
+        this.terminationTime = timeValue + executionTime + threshold;
         this.rejected = false;
         this.executionType = executionType;
     }
 
-    public ServerlessFunctionModel(Long threshold) {
-        //idle
-        this.executionTime = this.currentTime = Double.valueOf(threshold);
-        this.startTime = LocalDateTime.now();
+    public double getNextEventTime() {
+        if(this.executionType.equals(ServerlessExecutionEnum.IDLE))
+            return this.terminationTime;
+        else
+            return this.endOfExecutionTime;
+    }
+
+    public void startWarmExecution(double timeValue, double executionTime, Long threshold) {
+        this.executionTime = executionTime;
+        this.startTime = timeValue;
+        this.endOfExecutionTime = timeValue + executionTime;
+        this.terminationTime = timeValue + executionTime + threshold;
         this.rejected = false;
-        this.executionType = ServerlessExecutionEnum.IDLE;
+        this.executionType = ServerlessExecutionEnum.WARM;
+    }
+
+    public ServerlessExecutionEnum transitionToNextState() {
+        if(this.executionType.equals(ServerlessExecutionEnum.WARM) || this.executionType.equals(ServerlessExecutionEnum.COLD)) {
+            ServerlessExecutionEnum old = this.executionType;
+            this.executionType = ServerlessExecutionEnum.IDLE;
+            return old;
+        }
+        else if(this.executionType.equals(ServerlessExecutionEnum.IDLE)) {
+            return ServerlessExecutionEnum.IDLE;
+        }
+        else
+            throw new RuntimeException("Erro ao fazer transição - tipo de execução inválido");
     }
 }

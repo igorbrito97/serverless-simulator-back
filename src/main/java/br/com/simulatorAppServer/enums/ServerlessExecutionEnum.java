@@ -6,10 +6,10 @@ import lombok.Getter;
 public enum ServerlessExecutionEnum {
     COLD(1L, "Warm"),
     WARM(2L, "Cold"),
-    IDLE(3L, "Idle time");
+    IDLE(3L, "Idle");
 
-    Long id;
-    String description;
+    final Long id;
+    final String description;
 
     ServerlessExecutionEnum(Long id, String description) {
         this.id = id;
