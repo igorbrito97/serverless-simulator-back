@@ -22,8 +22,4 @@ public class SimulationInputDto {
 
     @NotNull(message = "Taxa de chegada deve ser preenchida.")
     private Long simulationTime;//tempo "maximo" de simulação
-
-    @NotNull(message = "Taxa de chegada deve ser preenchida.")
-    private Long skipInitialTime;// ? - pular um tempo inicial antes de começar ??
-
 }
