@@ -3,9 +3,11 @@ package br.com.simulatorAppServer.models;
 import br.com.simulatorAppServer.enums.ServerlessExecutionEnum;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class ServerlessFunctionModel {
     private Boolean rejected;
     private ServerlessExecutionEnum executionType;
