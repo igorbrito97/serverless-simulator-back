@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum ServerlessExecutionEnum {
-    COLD(1L, "Warm"),
-    WARM(2L, "Cold"),
+    COLD(1L, "Cold"),
+    WARM(2L, "Warm"),
     IDLE(3L, "Idle");
 
     final Long id;

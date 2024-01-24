@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static br.com.simulatorAppServer.enums.ServerlessExecutionEnum.*;
@@ -70,40 +71,28 @@ public class SimulationModel {
         this.allInstancesCount++;
         ServerlessFunctionModel function = this.instances.stream().filter(item -> item.getExecutionType().equals(IDLE)).findFirst().orElseThrow(() -> new RuntimeException("ERROR - Idle instance not found"));
         function.startWarmExecution(arrivalTime, executionTime, threshold);
-        this.instances.add(function);
         this.allRunningInstances.add(function);
         this.allWarmArrivalTimes.add(arrivalTime);
     }
 
-    public int getNextEventIndex() {
-        List<Double> nextEventList = this.instances.stream().map(ServerlessFunctionModel::getNextEventTime).collect(Collectors.toList());
-        int idx = 0;
-        double min = nextEventList.get(idx);
-        for(int i = 1; i < nextEventList.size(); i++) {
-            if(nextEventList.get(i) < min) {
-                idx = i;
-            }
-        }
-        log.info("FOUND MIN NEXT EVENT VALUE: {} - IDX: {} ", nextEventList.get(idx), idx);
-        return idx;
-
-        //acho que essa parte aqui de cima esta com problema....... na execução ele mostra que o tempo minimo encontrado é um que ja passou.....
-//        this.instances.forEach(function -> {
-//
-//        });
+    public ServerlessFunctionModel getNextEvent() {AtomicReference<ServerlessFunctionModel> min = new AtomicReference<>(this.instances.get(0));
+        this.instances.forEach(function -> {
+            if(function.getNextEventTime() < min.get().getNextEventTime())
+                min.set(function);
+        });
+        return min.get();
     }
 
-    public void transitionEndingInstance(int idx) {
-        ServerlessExecutionEnum oldState = this.instances.get(idx).transitionToNextState();
+    public void transitionEndingInstance(ServerlessFunctionModel idx) {
+        ServerlessExecutionEnum oldState = idx.transitionToNextState();
         if(oldState == IDLE) {
-            log.info("TRANSITIONING {} FROM IDLE TO FINISHED", idx);
-            this.finishedInstances.add(this.instances.get(idx));
+            log.info("TRANSITIONING {} TO FINISHED FROM IDLE", idx);
+            this.finishedInstances.add(idx);
             this.instances.remove(idx);
         }
         else {
             log.info("TRANSITIONING {} TO IDLE FROM RUNNINGGGGGGGGG", idx);
-            this.instances.get(idx).setExecutionType(IDLE);
-            this.allIdleInstances.add(this.instances.get(idx));
+            this.allIdleInstances.add(idx);
         }
     }
 
