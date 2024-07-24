@@ -1,2 +1,5 @@
 # serverless-simulator-back
-Backend do simulador de computação serverless desenvolvido para conclusão do mestrado
+
+Serverless computing simulator developed for master's degree completion.
+
+Simulador de computação serverless desenvolvido para conclusão do mestrado.
