@@ -11,6 +11,7 @@ import lombok.ToString;
 public class ServerlessFunctionModel {
     private Boolean rejected;
     private ServerlessExecutionEnum executionType;
+    private double creationTime;
     private double startTime;
     private double executionTime;
     private double endOfExecutionTime;
@@ -28,7 +29,7 @@ public class ServerlessFunctionModel {
     public ServerlessFunctionModel(double timeValue, double executionTime, Long threshold, ServerlessExecutionEnum executionType) {
         //normal
         this.executionTime = executionTime;
-        this.startTime = timeValue;
+        this.startTime = this.creationTime = timeValue;
         this.endOfExecutionTime = timeValue + executionTime;
         this.terminationTime = timeValue + executionTime + threshold;
         this.rejected = false;
@@ -61,6 +62,10 @@ public class ServerlessFunctionModel {
             return ServerlessExecutionEnum.IDLE;
         }
         else
-            throw new RuntimeException("Erro ao fazer transição - tipo de execução inválido");
+            throw new RuntimeException("Error on transition - invalid execution type");
+    }
+
+    public double getLifeSpan() {
+        return this.terminationTime - this.creationTime;
     }
 }
