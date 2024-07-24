@@ -1,16 +1,22 @@
 package br.com.simulatorAppServer.models;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 public class SimulationResultsModel {
-    private Long coldProbability;
-    private Long rejectionProbability;
-    private Long averageInstanceLifespan;
-    private Long averageServerCount;
-    private Long averageRunningServers;
-    private Long averageIdleCount;
-    private Long averageResponseTime;
+    private int coldInstancesCount;
+    private int warmInstancesCount;
+    private int requestsCount;
+    private int rejectedCount;
+    private double coldProbability;
+    private double rejectionProbability;
+    private double warmProbability;
+    private double averageInstanceLifespan;
+    private double averageServerCount;
+    private double averageRunningServers;
+    private double averageIdleCount;
 }
